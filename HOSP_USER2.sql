@@ -1,0 +1,34 @@
+-- 1.7) User2 inserts data
+--------------------------------------------------
+Show user;
+
+INSERT INTO HOSP_USER1.Rooms VALUES (1,'ICU',5,5);
+INSERT INTO HOSP_USER1.Rooms VALUES (2,'General',10,10);
+
+--------------------------------------------------
+-- ERROR 0.1
+--------------------------------------------------
+SELECT table_schema, table_name, privilege
+FROM all_tab_privs
+WHERE grantee = 'HOSP_USER2';
+-- Ro7 ll XEPDB1
+--------------------------------------------------
+
+INSERT INTO HOSP_USER1.PATIENTS
+VALUES (1, 'Ahmed Ali', DATE '1998-05-05', 'Admitted', 0, NULL);
+
+INSERT INTO HOSP_USER1.PATIENTS
+VALUES (2, 'Mona Hassan', DATE '1995-02-10', 'Admitted', 0, NULL);
+
+COMMIT;
+
+-- Ro7 ll User1
+
+
+-- 11.1) WAITER
+--------------------------------------------------
+SHOW USER;
+
+UPDATE HOSP_USER1.Rooms
+SET availability = availability - 1
+WHERE id = 1;

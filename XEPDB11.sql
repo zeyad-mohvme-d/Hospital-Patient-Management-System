@@ -1,0 +1,81 @@
+-- بسم الله الرحمن الرحيم
+-- Bos  ya abn el hala w anta btrn 3ank am4y wara el el arkam (y3ny 1.0 --> 1.1 --> 1.2 w kda) htl2eny ktblk ro7 fen b3d kol rakm w twakl
+---------------------------------------------------------------
+-- TASK (1): User Management and Privileges
+---------------------------------------------------------------
+
+-- 1.0) Bnzbt el Enivorment
+--------------------------------------------------
+-- RUN AS SYS
+BEGIN EXECUTE IMMEDIATE 'DROP USER HOSP_MANAGER CASCADE'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+BEGIN EXECUTE IMMEDIATE 'DROP USER HOSP_USER1 CASCADE'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+BEGIN EXECUTE IMMEDIATE 'DROP USER HOSP_USER2 CASCADE'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+
+CREATE USER HOSP_MANAGER IDENTIFIED BY manager123
+DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+
+GRANT CREATE SESSION, CREATE USER, ALTER USER, DROP USER TO HOSP_MANAGER;
+GRANT CREATE TABLE, CREATE SEQUENCE, CREATE PROCEDURE, CREATE TRIGGER TO HOSP_MANAGER;
+
+Show USER;
+SHOW CON_NAME;
+-- CONNECT HOSP_MANAGER/manager123; 
+-- Ro7 ll HOSP_MANAGER Script w kaml hnak
+
+-- 1.2) Giving access to User1 & User2
+--------------------------------------------------
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE,
+      CREATE PROCEDURE, CREATE TRIGGER TO HOSP_USER1;
+
+GRANT CREATE SESSION TO HOSP_USER2;
+
+-- Ro7 ll HOSP_USER1
+
+-- 1.6) Giving User2 Insert Privileges
+--------------------------------------------------
+GRANT INSERT, SELECT ON HOSP_USER1.Patients TO HOSP_USER2;
+GRANT INSERT, SELECT ON HOSP_USER1.Rooms TO HOSP_USER2;
+
+-- -- Ro7 ll HOSP_USER2
+
+--------------------------------------------------
+-- Error 0.2
+--------------------------------------------------
+SELECT *
+FROM all_tab_privs
+WHERE grantee = 'HOSP_USER2';
+
+SELECT owner, table_name
+FROM dba_tables
+WHERE owner = 'HOSP_USER1';
+
+GRANT INSERT, SELECT ON HOSP_USER1.PATIENTS TO HOSP_USER2;
+GRANT INSERT, SELECT ON HOSP_USER1.ROOMS TO HOSP_USER2;
+GRANT UPDATE ON HOSP_USER1.ROOMS TO HOSP_USER2;
+
+-- Ro7 ll User1
+--------------------------------------------------
+
+
+---------------------------------------------------------------
+-- TASK (12): Identify Blocker & Waiting Sessions
+---------------------------------------------------------------
+
+-- 12.0) 
+--------------------------------------------------
+SELECT
+  sid,
+  serial#,
+  username,
+  status,
+  blocking_session,
+  event
+FROM v$session
+WHERE username IN ('HOSP_USER1', 'HOSP_USER2');
+
+-- Ro7 ll User1
+
+
